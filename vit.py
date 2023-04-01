@@ -20,6 +20,13 @@ class ViT(nn.Module):
         self.linear_input = self.patch_size[0] * self.patch_size[1] * self.channel
         self.linear = nn.Linear(self.linear_input, self.hidden_d)
 
+        # Layer Normalization (Normalise based on the last dimension)
+        '''
+        Batchnorm2d calculates mean and sd with respect to each channel for the batch
+        LayerNorm calculates mean and sd with respect to last D dimensions of normalized shape
+        '''
+        self.ln = nn.LayerNorm(hidden_d)
+
         # Learnable Classification Token
         self.class_token = nn.Parameter(torch.rand(1, self.hidden_d))
 
@@ -61,6 +68,7 @@ class ViT(nn.Module):
         tokens = torch.stack([torch.vstack((self.class_token, tokens[i])) for i in range(len(tokens))])
         pos_emb = self.pos_embed.repeat(images.shape[0], 1, 1)
         out = tokens + pos_emb
+        out = self.ln(out)
         return out
         # return tokens
 
