@@ -117,6 +117,7 @@ class ViT(nn.Module):
     def patchify(self, images, n_patches):
         num_images, _, _, _ = images.shape
 
+
         assert self.height == self.width, 'Implemented only for square images for now!'
         
         # Gives Batch x Number of Patches x Number of Pixels in a Patch
